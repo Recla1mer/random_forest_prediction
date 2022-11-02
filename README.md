@@ -1,7 +1,7 @@
 # random_forest_prediction
 
 Here is the code (and its results) I created in the curse of my bachelor thesis.
-I used random forest regression to examine what drives high-$T_c$ values among the SuperCon
+I used random forest regression to examine what drives high- $T_c$ values among the SuperCon
 database and predicted the $T_c$ for about 30 million chemical compositions.
 
 Please be warned: 
