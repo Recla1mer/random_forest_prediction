@@ -1,0 +1,87 @@
+Elements not working for features in: pymatgen
+
+"K" not working for: coefficient_of_linear_thermal_expansion | 
+"As" not working for: velocity_of_sound | coefficient_of_linear_thermal_expansion | 
+"O" not working for: electrical_resistivity | bulk_modulus | coefficient_of_linear_thermal_expansion | 
+"Tm" not working for: velocity_of_sound | 
+"Os" not working for: bulk_modulus | 
+"S" not working for: velocity_of_sound | coefficient_of_linear_thermal_expansion | 
+"F" not working for: electrical_resistivity | velocity_of_sound | bulk_modulus | coefficient_of_linear_thermal_expansion | 
+"Ga" not working for: bulk_modulus | 
+"Sr" not working for: velocity_of_sound | bulk_modulus | 
+"N" not working for: electrical_resistivity | bulk_modulus | coefficient_of_linear_thermal_expansion | 
+"Cl" not working for: coefficient_of_linear_thermal_expansion | 
+"In" not working for: bulk_modulus | 
+"Zr" not working for: bulk_modulus | 
+"Se" not working for: coefficient_of_linear_thermal_expansion | 
+"Hg" not working for: coefficient_of_linear_thermal_expansion | 
+"Eu" not working for: velocity_of_sound | 
+"Rb" not working for: coefficient_of_linear_thermal_expansion | 
+"Np" not working for: velocity_of_sound | bulk_modulus | coefficient_of_linear_thermal_expansion | 
+"P" not working for: velocity_of_sound | coefficient_of_linear_thermal_expansion | 
+"H" not working for: electrical_resistivity | bulk_modulus | coefficient_of_linear_thermal_expansion | 
+"Ge" not working for: bulk_modulus | 
+"Pa" not working for: velocity_of_sound | bulk_modulus | coefficient_of_linear_thermal_expansion | 
+"Te" not working for: coefficient_of_linear_thermal_expansion | 
+"T" not working for: atomic_mass | atomic_radius | mendeleev_no | electrical_resistivity | velocity_of_sound | thermal_conductivity | melting_point | bulk_modulus | coefficient_of_linear_thermal_expansion | 
+"Lu" not working for: velocity_of_sound | 
+"Br" not working for: velocity_of_sound | coefficient_of_linear_thermal_expansion | 
+"I" not working for: velocity_of_sound | coefficient_of_linear_thermal_expansion | 
+"Sc" not working for: velocity_of_sound | 
+"D" not working for: atomic_mass | atomic_radius | mendeleev_no | electrical_resistivity | velocity_of_sound | thermal_conductivity | melting_point | bulk_modulus | coefficient_of_linear_thermal_expansion | 
+"Cs" not working for: velocity_of_sound | coefficient_of_linear_thermal_expansion | 
+"Tc" not working for: velocity_of_sound | bulk_modulus | coefficient_of_linear_thermal_expansion | 
+"Pu" not working for: bulk_modulus | coefficient_of_linear_thermal_expansion | 
+"Am" not working for: electrical_resistivity | velocity_of_sound | bulk_modulus | coefficient_of_linear_thermal_expansion | 
+"Cm" not working for: atomic_radius | electrical_resistivity | velocity_of_sound | bulk_modulus | coefficient_of_linear_thermal_expansion | 
+"Po" not working for: velocity_of_sound | bulk_modulus | coefficient_of_linear_thermal_expansion | 
+
+In total: 35 elements
+
+
+Elements not working for features in: magpie
+
+"T" not working for: MendeleevNumber | AtomicWeight | MeltingT | Column | Row | CovalentRadius | Electronegativity | GSvolume_pa | GSbandgap | GSmagmom | SpaceGroupNumber | 
+"D" not working for: MendeleevNumber | AtomicWeight | MeltingT | Column | Row | CovalentRadius | Electronegativity | GSvolume_pa | GSbandgap | GSmagmom | SpaceGroupNumber | 
+
+In total: 2 elements
+
+
+Elements not working for features in: deml
+
+"Ru" not working for: heat_cap | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"Tm" not working for: heat_cap | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"Os" not working for: heat_cap | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"Nd" not working for: heat_cap | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"Re" not working for: heat_cap | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"Tl" not working for: heat_cap | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"Sm" not working for: heat_cap | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"Tb" not working for: heat_cap | electronegativity | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"Ce" not working for: heat_cap | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"B" not working for: electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"C" not working for: heat_fusion | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"Gd" not working for: heat_cap | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"Ho" not working for: heat_cap | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"Eu" not working for: heat_cap | electronegativity | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"Pr" not working for: heat_cap | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"Er" not working for: heat_cap | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"Np" not working for: melting_point | boiling_point | heat_cap | first_ioniz | electronegativity | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"H" not working for: heat_cap | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"Pa" not working for: melting_point | boiling_point | heat_cap | first_ioniz | electronegativity | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"Yb" not working for: heat_cap | electronegativity | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"T" not working for: atom_num | atom_mass | atom_radius | molar_vol | heat_fusion | melting_point | boiling_point | heat_cap | first_ioniz | electronegativity | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"U" not working for: melting_point | boiling_point | heat_cap | first_ioniz | electronegativity | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"Th" not working for: melting_point | boiling_point | heat_cap | first_ioniz | electronegativity | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"Lu" not working for: heat_cap | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"Br" not working for: GGAU_Etot | mus_fere | FERE correction | 
+"I" not working for: GGAU_Etot | mus_fere | FERE correction | 
+"Dy" not working for: heat_cap | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"D" not working for: atom_num | atom_mass | atom_radius | molar_vol | heat_fusion | melting_point | boiling_point | heat_cap | first_ioniz | electronegativity | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"Cs" not working for: GGAU_Etot | mus_fere | FERE correction | 
+"Tc" not working for: heat_cap | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"Pu" not working for: heat_fusion | melting_point | boiling_point | heat_cap | first_ioniz | electronegativity | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"Am" not working for: heat_fusion | melting_point | boiling_point | heat_cap | first_ioniz | electronegativity | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"Cm" not working for: atom_radius | heat_fusion | melting_point | boiling_point | heat_cap | first_ioniz | electronegativity | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+"Po" not working for: heat_cap | electric_pol | GGAU_Etot | mus_fere | FERE correction | 
+
+In total: 34 elements

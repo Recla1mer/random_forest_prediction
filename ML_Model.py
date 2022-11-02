@@ -92,7 +92,7 @@ global_filter_properties_kwargs = {
     "source": DiM.suggested_source,
     "features": DiM.suggested_features,
     "filtering_arguments": single_no_filter,
-    "cT_in_log_values": True,
+    "cT_in_log_values": False,
     "epsilon": 0.005,
     "only_properties": False
 }
@@ -2183,6 +2183,186 @@ def analyse_predicted(data_location="Predictions", combine=False, remove=[]):
             best_predicted(data_directory + file)
 
 
+def speci(data_location="ana_king/combi.txt", remove=[], name="ana_king/combined.txt", reduce_file=True, bibo=" "):
+    """
+    unimportant
+    """
+    file = open(data_location, "r")
+    used_lines = file.readlines()
+    file.close()
+    new_file = open(name, "w")
+    if reduce_file:
+        old_file = open(data_location, "w")
+    new_lines = []
+
+    deletion_counter = 0
+    for i in range(0, len(used_lines)):
+        delete_em = True
+        for j in range(0, len(used_lines[i-deletion_counter])):
+            if used_lines[i-deletion_counter][j] == bibo:
+                chem = used_lines[i-deletion_counter][0:j]
+                break
+        chem_els = DiM.extract_elements(chem)
+        for el in remove:
+            if el not in chem_els:
+                delete_em = False
+        if delete_em:
+            new_lines.append(used_lines[i-deletion_counter])
+            del used_lines[i-deletion_counter]
+            deletion_counter += 1
+
+    if reduce_file:
+        for line in used_lines:
+            old_file.write(line)
+        old_file.close()
+    for line in new_lines:
+        new_file.write(line)
+
+    new_file.close()
+
+
+def most_elements(data_location="ana_king/combined_sort_average.txt", name="ana_king/promsis_nice.txt"):
+    """
+    unimportant
+    """
+    file = open(data_location, "r")
+    used_lines = file.readlines()
+    file.close()
+    new_file = open(name, "w")
+    
+    new_dict = dict()
+
+    for i in range(0, len(used_lines)):
+        for j in range(0, len(used_lines[i])):
+            if used_lines[i][j] == " ":
+                chem = used_lines[i][0:j]
+                break
+        chem_els = DiM.extract_elements(chem)
+        for el in chem_els:
+            try:
+                new_dict[el] += 1
+            except:
+                new_dict[el] = 1
+
+    els = []
+    num = []
+    start = 0
+    for el in new_dict:
+        appended = False
+        if start == 0:
+            els.append(el)
+            num.append(int(new_dict[el]))
+            start = 1
+            appended = True
+        else:
+            for i in range(0, len(num)):
+                if new_dict[el] < num[i]:
+                    num.insert(i, int(new_dict[el]))
+                    els.insert(i, el)
+                    appended = True
+                    break
+        if not appended:
+            num.append(int(new_dict[el]))
+            els.append(el)
+
+    file_lines = []
+
+    for k in range(0, len(els)):
+        this_dict = dict()
+        for i in range(0, len(used_lines)):
+            for j in range(0, len(used_lines[i])):
+                if used_lines[i][j] == " ":
+                    chem = used_lines[i][0:j]
+                    break
+            chem_els = DiM.extract_elements(chem)
+
+            if els[k] in chem_els:
+                for a in chem_els:
+                    if a != els[k]:
+                        try:
+                            this_dict[a] += 1
+                        except:
+                            this_dict[a] = 1
+
+        ordered_elsi = []
+        ordered_nums = []
+        for eli in this_dict:
+            appended = False
+            for o in range(0, len(ordered_nums)):
+                if this_dict[eli] < ordered_nums[o]:
+                    ordered_nums.insert(o, this_dict[eli])
+                    ordered_elsi.insert(o, eli)
+                    appended = True
+                    break
+            if not appended:
+                ordered_nums.append(this_dict[eli])
+                ordered_elsi.append(eli)
+
+        this_line = els[k] + ", " + str(round(num[k]/len(used_lines)*100,3)) + " : "
+        for p in range(len(ordered_elsi)-1,len(ordered_elsi)-15,-1):
+            this_line += ordered_elsi[p] + "(" + str(round(ordered_nums[p]/num[k]*100, 2)) + "), "
+        file_lines.append(this_line)
+
+    for i in range(0, len(file_lines)):
+        new_file.write(file_lines[i] + "\n")
+
+    new_file.close()
+
+
+def alter(data_location="bad_style/test2.txt", name = "bad_style/test_trans.txt"):
+    """
+    unimportant
+    """
+    file = open(data_location, "r")
+    used_lines = file.readlines()
+    file.close()
+
+    new_file = open(name, "w")
+    new_lines = []
+    must_in = ["|"]
+
+    for line in used_lines:
+        move_on = False
+        for num in must_in:
+            if num in line:
+                move_on = True
+        if not move_on:
+            continue
+
+        for i in range(0, len(line)):
+            if line[i] == " ":
+                chem_el = line[0:i]
+                break
+        for i in range(0, len(line)):
+            if line[i] == "|":
+                predicted_by = line[i+2]
+                break
+
+        numbers = []
+        for i in range(0, len(line)):
+            if line[i] == "|":
+                start = i+2
+            if line[i] == ";" or line[i] == "-":
+                numbers.append(float(line[start:i-1]))
+                start = i+2
+                if line[i] == "-":
+                    break
+        numbers = np.array(numbers)
+        avg = np.mean(numbers)
+        std = np.std(numbers)
+
+        els = DiM.extract_elements(copy.deepcopy(chem_el))
+        els_num = DiM.extract_pattern_numbers(copy.deepcopy(chem_el))
+        this = ""
+        for i in range(0, len(els)):
+            this += els[i] + "$_" + str(els_num[i]) + "$" 
+        this += " (" + predicted_by + ") & $(" + str(round(avg,2)) + " \\pm " + str(round(std,2)) + ")$\\,K"
+        new_lines.append(this)
+
+    for line in new_lines:
+        new_file.write(line + "\n")  
+
+
 def predict_specific(
     predict_compositions,
     setting_location, 
@@ -2194,8 +2374,7 @@ def predict_specific(
     create_pickle = True,
     revert_log = True,
     test_temps = [],
-    pickle_name = "Predictions",
-    Path = ""
+    pickle_name = "RG_Predictions"
     ):
     """
     MAIN FUNCTION
@@ -2251,9 +2430,6 @@ def predict_specific(
             
         kwargs = pickle_data_loaded
         kwargs["random_split"]=random.randint(0, 100)
-        
-        if len(Path) > 0:
-            kwargs["Path"] = Path
 
         filter_prop_args = dict()
         for keys in global_filter_properties_kwargs:
@@ -2289,6 +2465,7 @@ def predict_specific(
             comp_elements, comp_values = DiM.vector_from_simple_string(comp_string)
             for co_el in comp_elements:
                 if co_el not in ccm1[0]:
+                    print(co_el)
                     append = False
             if append:
                 new_simple_cc = DiM.expand_vector(element_order, comp_elements, comp_values)
@@ -2307,7 +2484,8 @@ def predict_specific(
                 if len(test) != 0:
                     del test[i-deletion_counter]
                     deletion_counter += 1
-        
+        print(deletion_counter)
+
         if kwargs["with_properties"]:
             for i in range(0, len(kwargs["source"])):
                 for propi in kwargs["features"][i]:
@@ -2363,7 +2541,8 @@ def predict_specific(
         if len(test) != 0:
             accuracies = np.array(accuracies)
             mean_acc = np.mean(accuracies)
-            print(mean_acc)
+            std_acc = np.std(accuracies)
+            print(kwarg_path, mean_acc, std_acc)
 
         made_predictions = np.array(made_predictions)
         #print(len(made_predictions))
@@ -2460,165 +2639,195 @@ def predict_specific(
     )
 
 
-def create_composition_with_filtered(Path=DiM.SUPERCON_PATH, number_datapoints=10, filter_elements = [["Cu", "O"]], higher = 75, mix=True):
+def mua(data_location="Predictions"):
     """
+    unimportant
     """
-    DiM.create_cc(Path)
-    DiM.filter_dataset(filter_out_element_combinations=filter_elements)
-
-    used_file = open(DiM.CHANGING_DATA_DIRECTORY_NAME + DiM.USED_DATA_FILE_NAME, "r")
-    used_lines = used_file.readlines()
-    filtered_file = open(DiM.CHANGING_DATA_DIRECTORY_NAME + DiM.FILTERED_COMPOSITIONS_FILE_NAME, "r")
-    filter_lines = filtered_file.readlines()
-    used_file.close()
-    filtered_file.close()
-    print(len(filter_lines))
-    if number_datapoints > len(filter_lines):
-        number_datapoints = len(filter_lines)
-
-    higher_ones = []
-    for i in range(0, len(filter_lines)):
-        cT = DiM.extract_cT(DiM.correct_ending(copy.deepcopy(filter_lines[i])))
-        if cT >= higher:
-            higher_ones.append(filter_lines[i])
-
-    random_numbers = []
-    counter = 0
-    if not mix:
-        while counter < number_datapoints:
-            random_num = random.randint(0, len(higher_ones)-1)
-            if random_num in random_numbers:
-                continue
-            else:
-                random_numbers.append(random_num)
-                counter += 1
-        for i in random_numbers:
-            used_lines.append(higher_ones[i])
+    if os.path.isdir(data_location):
+        data_files = os.listdir(data_location)
+        data_directory = data_location + "/"
     else:
-        half = int(number_datapoints/2)
-        while counter < half:
-            random_num = random.randint(0, len(higher_ones)-1)
-            if random_num in random_numbers:
-                continue
-            else:
-                random_numbers.append(random_num)
-                counter += 1
-        for i in random_numbers:
-            used_lines.append(higher_ones[i])
-        del random_numbers
-        random_numbers = []
-        while counter < number_datapoints:
-            random_num = random.randint(0, len(filter_lines)-1)
-            if random_num in random_numbers:
-                continue
-            else:
-                random_numbers.append(random_num)
-                counter += 1
-        for i in random_numbers:
-            used_lines.append(filter_lines[i])
-    
-    used_file = open(DiM.CHANGING_DATA_DIRECTORY_NAME + DiM.USED_DATA_FILE_NAME, "w")
-    filtered_file = open(DiM.CHANGING_DATA_DIRECTORY_NAME + DiM.FILTERED_COMPOSITIONS_FILE_NAME, "w")
+        data_files = [data_location]
+        data_directory = ""
+        combine = False
 
-    for line in used_lines:
-        used_file.write(line)
-    for line in filter_lines:
-        filtered_file.write(line)
-    filtered_file.close()
-    used_file.close()
+    data_files = remove_all_but(copy.deepcopy(data_files), string="txt")
 
-    filtered_cc = []
-    filtered_cT = []
+    first_file = open(data_directory + "first.txt", "w")
+    second_file = open(data_directory + "second.txt", "w")
+    for filie in data_files:
+        file = open(data_directory + filie, "r")
+        used_lines = file.readlines()
+        file.close()
+        this_string = str(filie)
+        for k in range(0, 4):
+            this_string = this_string[0:len(this_string)-1]
+        this_string += " & "
+        second_string = copy.deepcopy(this_string)
+        muuu = 0
+        for i in used_lines:
+            if "promising" in i:
+                ratio = []
+                muuu += 1
+                start = 0
+                for j in range(0, len(i)):
+                    if i[j] == " ":
+                        try:
+                            ratio.append(int(i[start:j]))
+                            this_string += i[start:j]
+                            if start == 0:
+                                this_string += "/"
+                        except:
+                            start = j+1
+                            continue
+                        start = j+1
+                second_string += str(round(ratio[0]*100/ratio[1],2))
+                if muuu < 3:
+                    this_string += " & "
+                    second_string += " & "
+        this_string += " \\\\"
+        second_string += " \\\\"
+        first_file.write(this_string + "\n")
+        second_file.write(second_string + "\n")
 
-    for line in filter_lines:
-        cc_cT = DiM.correct_ending(line)
-        cT = DiM.extract_cT(copy.deepcopy(cc_cT))
-        filtered_cT.append(cT)
-        cc = DiM.extract_cc(cc_cT)
-        filtered_cc.append(cc)
-    
-    return filtered_cc, filtered_cT
 
-
-def just_testing():
+def sort_mua(data_directory="Predictions/"):
     """
-    NO RELEVANCE
-
+    unimportant
     """
+    first_file = open(data_directory + "first.txt", "r")
+    second_file = open(data_directory + "second.txt", "r")
+    first_lines = first_file.readlines()
+    second_lines = second_file.readlines()
+    first_file.close()
+    second_file.close()
 
-    filtering_arguments = [[], [], [0, 200]]
-    # filtering_arguments = [[["Cu", "O"]], [], [0, 200]]
-    # filtering_arguments = [[["Cu", "O"], ["Fe", "As"], ["Fe", "Se"]], [], [0, 200]]
+    values = []
+    for i in range(0, len(second_lines)):
+        bla = True
+        for j in range(0, len(second_lines[i])):
+            if second_lines[i][j] == "&" and not bla:
+                end = j-1
+                break
+            if second_lines[i][j] == "&" and bla:
+                start = j+2
+                bla = False
+        values.append(float(second_lines[i][start:end]))
 
-    # ccm1, cT = DiM.create_cc_with_properties(Path, source, features)
-    ccm1, cT = DiM.create_cc(DiM.SUPERCON_PATH)
-    ccm = copy.deepcopy(ccm1)[1:]
+    new_first = [first_lines[0]]
+    new_second = [second_lines[0]]
+    new_values = [values[0]]
 
-    foc = filtering_arguments[0]
-    # fie = filtering_arguments[1]
-    ft = filtering_arguments[2]
+    for i in range(1, len(values)):
+        appended = False
+        for j in range(0, len(new_values)):
+            if values[i] < new_values[j]:
+                appended = True
+                new_values.insert(j, values[i])
+                new_first.insert(j, first_lines[i])
+                new_second.insert(j, second_lines[i])
+                break
+        if not appended:
+            new_values.append(values[i])
+            new_first.append(first_lines[i])
+            new_second.append(second_lines[i])
 
-    # print(len(ccm))
-    # ccm, cT = DiM.filter_dataset(ccm = copy.deepcopy(ccm), cT = copy.deepcopy(cT), filter_for_temperature=ft, filter_out_element_combinations=foc)
+    ord_first = open(data_directory + "first_ordered.txt", "w")
+    ord_sec = open(data_directory + "second_ordered.txt", "w")
 
-    cT = DiM.transform_to_logarithmic(copy.deepcopy(cT), epsilon=1)
-    ccm_for_prediction = np.array(ccm)
-    cT_for_prediction = np.array(cT)
+    for i in range(0, len(new_values)):
+        ord_first.write(new_first[i])
+        ord_sec.write(new_second[i])
 
-    X_train, X_split, y_train, y_split = train_test_split(
-        ccm_for_prediction, cT_for_prediction, test_size=0.3, random_state=0
-    )
-
-    reg = RandomForestRegressor(
-        max_features="sqrt", bootstrap=True, oob_score=True, random_state=0
-    )
-    reg.fit(X_train, y_train)
-    print(reg.feature_importances_)
-    print(reg.oob_score_)
-    y_pred = reg.predict(X_split)
-    current_accuracy = mean_absolute_error(y_split, y_pred)
-    print(current_accuracy)
-    print(reg.score(X_split, y_split))
-    print(reg.feature_importances_)
-    # print(reg.decision_path(X_split))
-    print(reg.n_features_in_)
-    print(len(ccm1[0]))
-    print(ccm1[0])
-
-
-#just_testing()
-
-# predicted_distribution(["Simple_Predictions/A2B2C15.txt", "Simple_Predictions/A2B2C15_all.txt"], histogram_type="bar", facecolor=["red", "blue"], remove_text=False, cT_in_log_values=False, legend=["A2B2C15", "A2B2C15_all"], move_text=-0.5)
-# predicted_distribution(["Simple_Predictions/A2B2C15_all.txt", "Simple_Predictions/A2B3C4_all.txt"], histogram_type="bar", facecolor=["red", "blue"], remove_text=False, cT_in_log_values=False, legend=["A2B2C15_all", "A2B3C4_all"], move_text=-0.5)
-# predicted_distribution(["Simple_Predictions/A2B2C15_all.txt", "Simple_Predictions/A2B3C4_all.txt"], histogram_type="bar", remove_text=False, cT_in_log_values=False, move_text=-0.5, combine_paths=True)
-# best_predicted("Simple_Predictions/A2B3C4.txt")
-
-
-# no features: -> removes 0 -> 16273 datapoints                                                                                                                                                                                          splitting, max_features, bootstrap, acc, unbiased_acc, distance to: auto, true
-# blank:                     random_split: 939       random state: ???       random_seperate: 2943   -> removes 0    -> 16273 datapoints     acc: 0.46237 / 0.47372      acc_full: 0.7156, 0.7278, 0.7279 / 'auto', 'log2', 'sqrt'       real_new: 2353, sqrt, False, 0.490, 0.485, 0.016    sqrt always followed by log2
-# without copper_oxides:     random_split: 977       random state:           random_seperate: 3809   -> removes 5548 -> 10725 datapoints     acc: 0.35217 / 0.36660      acc_full: 0.7001, 0.7116, 0.7142 / 'auto', 'log2', 'sqrt'       real_new: 3973, sqrt, False, 0.379, 0.382, 0.015
-# without non-conventional:  random_split: 49        random state: 405       random_seperate: 6844   -> removes 6948 -> 9325 datapoints      acc: 0.34483 / 0.34227      acc_full: 0.6861, 0.7013, 0.7040 / 'auto', 'log2', 'sqrt'       real_new: 7325, sqrt, False, 0.359, 0.341, 0.007
-
-# minimal features: -> removes 34 -> 16239 datapoints
-# -> removed elements: T, D, Cm -> 3
-# blank:                     random_split: 800       random state: 166       random_seperate: 3371   -> removes 0    -> 16239 datapoints     acc: 0.48227 / 0.49327      acc_full: 0.7168, 0.7203, 0.7233 / 'log2', 'sqrt', 'auto'       real_new: 1960, sqrt, False, 0.513, 0.481, 0.01
-# without copper_oxides:     random_split: 22        random state: 18        random_seperate: 3531   -> removes 5544 -> 10695 datapoints     acc: 0.40492 / 0.38291      acc_full: 0.7083, 0.7099, 0.7158 / 'log2', 'sqrt', 'auto'       real_new: 4457, sqrt, False, 0.381, 0.392, 0.01
-# without non-conventional:  random_split: 40        random state: 17        random_seperate: 6826   -> removes 6941 -> 9298 datapoints      acc: 0.35916 / 0.34758      acc_full: 0.7063, 0.7068, 0.7135 / 'sqrt', 'log2', 'auto'       real_new: 6736, sqrt, False, 0.348, 0.349, 0.017
-
-# suggested features: -> removes 1728 -> 7675 datapoints
-# -> removed elements: T, D, Am, Cm, C, Np, Pa, U, Th, Pu -> 10
-# blank:                     random_split: 81        random state: 94        random_seperate: 5840   -> removes 0    -> 7675 datapoints      acc: 0.36600 / 0.35431      acc_full: 0.7176, 0.7189, 0.7269 / 'sqrt', 'log2', 'auto'       real_new: 9062, sqrt, False, 0.351, 0.356, 0.015
-# without copper_oxides:     random_split: 81        random state: 94        random_seperate: 9974   -> removes 0    -> 7675 datapoints      acc: 0.35091 / 0.35431      acc_full: 0.7168, 0.7208, 0.7260 / 'log2', 'sqrt', 'auto'       real_new: 7896, sqrt, False, 0.359, 0.362, 0.02
-# without non-conventional:  random_split: 90        random state: 98        random_seperate: 2460   -> removes 847  -> 6828 datapoints      acc: 0.33842 / 0.33436      acc_full: 0.7215, 0.7216, 0.7265 / 'sqrt', 'log2', 'auto'       real_new: 6618, sqrt, False, 0.324, 0.342, 0.003
-
-# all features: -> removes 14289 -> 1984 datapoints
-# -> removed elements: K, As, O, Tm, Os, S, F, Ga, Sr, N, Cl, In, Zr, Se, Hg, Eu, Rb, Np, P, H, Ge, Pa, Te, T, Lu, Br, I, Sc, D, Cs, Tc, Pu
-#                       Am,, Cm, Po, Ru, Nd, Re, Tl, Sm, Tb, Ce, B, C, Gd, Ho, Pr, Er, Yb, U, Th, Dy -> 52
-# blank:                     random_split: 87        random state: 53        random_seperate: 8501   -> removes 0    -> 1984 datapoints      acc: 0.30176 / 0.30599      acc_full: 0.7063, 0.7099, 0.713 / 'auto', 'log2', 'sqrt'        real_new: 3387, sqrt, False, 0.366, 0.329, 0.032
-# without copper_oxides:     random_split: 87        random state: 77        random_seperate: 7061   -> removes 0    -> 1984 datapoints      acc: 0.30230 / 0.30927      acc_full: 0.7079, 0.7099, 0.7142 / 'auto', 'log2', 'sqrt'       real_new: 6644, sqrt, False, 0.352, 0.311, 0.015
-# without non-conventional:  random_split: 87        random state: 68        random_seperate: 612    -> removes 0    -> 1984 datapoints      acc: 0.27002 / 0.30979      acc_full: 0.7062, 0.7099, 0.7138 / 'auto', 'log2', 'sqrt'       real_new: 5271, log2, False, 0.369, 0.351, 0.027
+    ord_first.close()
+    ord_sec.close()
 
 
-# single_copper_oxides_filter = [[["Cu", "O"]], [], [0, 200]]
-# single_non_conventional_filter = [[["Cu", "O"], ["Fe", "As"], ["Fe", "Se"]], [], [0, 200]]
-# using_properties -> miss: F, O, N, H, T, D, Am, Np, Pa, U, Th, Pu
+konno_comp = ["Ba0.9La0.1Fe2As2", "Ba0.1La0.9Fe2As2", "Ba0.5La0.5Fe2As2", 
+            "Ba0.9Ce0.1Fe2As2", "Ba0.1Ce0.9Fe2As2", "Ba0.5Ce0.5Fe2As2", 
+            "Ba0.9Pr0.1Fe2As2", "Ba0.1Pr0.9Fe2As2", "Ba0.5Pr0.5Fe2As2", 
+            "Ba0.9Nd0.1Fe2As2", "Ba0.1Nd0.9Fe2As2", "Ba0.5Nd0.5Fe2As2",
+            "Sr0.9La0.1Fe2As2", "Sr0.1La0.9Fe2As2", "Sr0.5La0.5Fe2As2", 
+            "Ba1Fe1Pt1As2", "Ba1Fe1.9Pt0.1As2", "Ba1Fe0.1Pt1.9As2",
+            "Ca0.9La0.1Fe2As0.1P1.9", "Ca0.1La0.9Fe2As1.9P0.1", "Ca0.5La0.5Fe2As1P1",
+            "Ca0.9La0.1Fe1As2", "Ca0.1La0.9Fe1As2", "Ca0.5La0.5Fe1As2",
+            "Na0.65Fe1.93Se2", "La1Fe1As1O0.4C0.6", "Sr1Al2Si2", "Nb1Si1As1",
+            "Ba1Ti2Sb2O1", "Ba1Ni2As1P1", "Ba1Ni1Cu1As2", "Nd1Ni0.64Bi2",
+            "La1Ni1B1N1", "Ca1Ni1B1N1", "La1Pt1B1N1", "La3Ni2B2N3", "La1Pd2As2",
+            "La1Pd2Sb2", "Sr1Pt2Sb2", "Ba1Pt2Sb2", "Sr1Pd2Bi2", "Ca1Pd2Bi2",
+            "Sr1Pt2Bi2", "La2Sb1", "Cr1Nb1N1", "Ca2Al3Si4", "Mg4Al1Si3", "La1Si2H0.03",
+            "Ba1Ge2H0.27", "La1Ge1.7", "Zr2Ru3Si4", "Mg1Pt1Si1", "Sr1Au1Si3",
+            "Li2Ir1Si3", "La1Ir1Pn1", "La1Rh1P1", "Bi4O4S3", "Nb5Ir3O1", "Sr1Ni1Sn3",
+            "Au1Te2", "Au0.5Pt0.5Te2", "Au0.5Pd0.5Te2", "Ir0.5Pt0.5Te2", "Ir0.5Rh0.5Te2",
+            "Nb1Be2", "Mo1C0.75", "Y1Fe2Si1C1", "Ca1Al1Si1", "Nb4Ni1Si1", "Nb4Co1Si1",
+            "Nb4Fe1Si1", "Ba3Ir4Ge16", "Ba4Ir8Ge28", "Ca2In1N1", "Sn1As1", "Cu1Zr2", "Hf1Zr2"]
+
+konno_temp = [22.4, 22.4, 22.4, 13.5, 13.5, 13.5, 6.1, 6.1, 6.1, 5.8, 5.8, 5.8,
+            20, 20, 20, 24, 24, 24, 45, 45, 45, 34, 34, 34, 37, 27, 4.6, 8.2,
+            3, 3.3, 3.3, 4, 4.1, 2.2, 6.7, 15, 1, 1.4, 2.1, 1.9, 2.2, 2.6, 2.6,
+            5, 11, 6.4, 5.2, 3, 4, 2, 5.7, 2.5, 1.54, 3.8, 5.3, 2.5, 4.5, 10.5,
+            5, 2.3, 4, 3, 3.1, 2.6, 2.6, 13, 3.5, 6.2, 7.7, 7.7, 7.7, 6.1,
+            3.2, 0.6, 2, 1, 1]
+
+kon_sing_comp = ["Na0.65Fe1.93Se2", "Sr1Al2Si2", "Nb1Si1As1", "Ba1Ti2Sb2O1",
+            "Ba1Ti2Sb2O1", "Ba1Ni2As1P1", "Ba1Ni1Cu1As2", "Nd1Ni0.64Bi2",
+            "La1Ni1B1N1", "Ca1Ni1B1N1", "La1Pt1B1N1", "La3Ni2B2N3", "La1Pd2As2",
+            "La1Pd2Sb2", "Sr1Pt2Sb2", "Ba1Pt2Sb2", "Sr1Pd2Bi2", "Ca1Pd2Bi2",
+            "Sr1Pt2Bi2", "La2Sb1", "Cr1Nb1N1", "Ca2Al3Si4", "Mg4Al1Si3", "La1Si2H0.03",
+            "Ba1Ge2H0.27", "La1Ge1.7", "Zr2Ru3Si4", "Mg1Pt1Si1", "Sr1Au1Si3", "Li2Ir1Si3",
+            "La1Ir1Pn1", "La1Rh1P1", "Bi4O4S3", "Nb5Ir3O1", "Sr1Ni1Sn3", "Au1Te2",
+            "Nb1Be2", "Mo1C0.75", "Y1Fe2Si1C1", "Nb4Ni1Si1", "Nb4Co1Si1", "Nb4Fe1Si1",
+            "Ba3Ir4Ge16", "Ba4Ir8Ge28", "Ca2In1N1", "Sn1As1", "Cu1Zr2", "Hf1Zr2"]
+
+kon_sing_temp = [37, 4.6, 8.2, 3, 3, 3.3, 3.3, 4, 4.1, 2.2, 6.7, 15, 1, 1.4,
+            2.1, 1.9, 2.2, 2.6, 2.6, 5, 11, 6.4, 5.2, 3, 4, 2, 5.7, 2.5,
+            1.54, 3.8, 5.3, 2.5, 4.5, 10.5, 5, 2.3, 2.6, 13, 3.5, 7.7,
+            7.7, 7.7, 6.1, 3.2, 0.6, 2, 1, 1]
+
+konno_no_comp = ["Mg1Fe1As1H1", "Ca1Fe1P1H1", "Ca1Fe1O1Se1", "Zr1Fe2B2", "Ca1Fe3Li1As3",
+                "Sr3Fe2Cu2Se2O5", "Sr1Fe1As1H1", "Sr1Fe1O1Se1", "Mg1Fe2As2", "La1Fe0.5Sb2",
+                "La3O4Fe4As3", "Na1Fe2O4", "Ba1Fe1As1H1", "K1Fe1Se1F1", "Fe1Se0.5As0.5",
+                "Bi2Sr1Fe2O4Se2", "Ca1Fe4As3", "Fe1Se1As1", "Fe0.5Ni0.5As2", "La3O4Fe4As4",
+                "Eu1Fe1As1H1", "La1Fe1Si1F1", "Ba1Fe2Sb2", "Y1Fe2B2", "La3O2Fe4As4", 
+                "Ag1Fe1As1", "Ca1Fe3Ag1As3", "Mg1Fe1P1H1", "La1Fe1O1Sb1", "Ba1Fe2Se2", 
+                "Zr1Fe2Si2", "Ca3F2Fe4As4", "Ca1Fe3Cu1As3", "Fe0.5Ru0.5As2", "Ca2Fe1Os1O6",
+                "Ba1Fe2Se2O1", "Eu1Ti2As2O1", "Ca1Mn2Sb2", "Ba1Mn1Ru1As2", "Ba1Mn1Bi2", 
+                "Y3Ni1Si1", "Cu2As1", "Ba1Cu2As2", "Ba1Ti2Sb2O1", "Ba1Co2Ge2", "La1Ni1As1",
+                "K1Ni2Se2", "Sr1Cr1As1F1", "Sr1Mn1As1F1", "Y1Co2B2", "Mg1Ni1Ge1", "La3Ni1Si3",
+                "Zr1Ni2Si2", "Mg1Cu1As1", "Ba1Cu6As2", "Sr1Ti2As2O1", "Eu1Cr1As1F1", 
+                "Ba1Mn1As1F1", "Ba1Mn2As2", "Y1Co2Ge2", "La1Co2Ge2", "Rh1Ni1P1", "Ca2Cu6P5",
+                "Y1Cu1Sb2", "Zr1Cu2As2", "La3Ru2B2N3", "Zr2Ti2As2H1", "Eu1Mn1As1F1", "Ca1Mn2As2",
+                "Ba1Mn1Ir1As2", "La1Co0.6Sb2", "Y1Cu1As2", "Bi1O1Cu1S1", "Nb1Ge1As1", "La2O2Bi2",
+                "La3Si3", "Ta1Ge1As1", "La1Ag1Bi2", "Ti1Si1As1", "Ba1Ni1Sn3", "Ce2O2Bi2", 
+                "Ce2O2Bi1", "Pr2O2Bi1", "La2O2Te1", "Nd2O2Bi1", "Yb2O2Bi1", "La2O2Sb1", "Y2O2Bi1"]
+
+konno_no_temp = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+paper_comp = ["Al1Ba1Ca1F7", "As4Ba1Cu8", "Ba1Cu4S3", "Cr1Cu1Se2", "Li1Rb1S1", "Al1B4Cr3",
+            "Al1Ba3P3", "Ba1Cu1Te2O7", "Ba1Cu3Br2O4", "Ba5Br2Ru2O9", "Ca1Cu2Eu2O6", "Cr2Cu1O4",
+            "Cu3Na7O8", "Cl2Sr2Cu1O2"]
+
+paper_temp = [46, 50, 31, 26, 21, 50, 38, 54, 60, 57, 65, 50, 67, 27]
+
+stanev = ["Cs1Be1As1O4", "Rb1As1O2", "K1Sb1O2", "Rb1Sb1O2", "Cs1Sb1O2", "Ag1Cr1O2", 
+        "K0.8Li0.2Sn0.76O2", "Cs1Mo1Zn1O3F3", "Na3Cd2Ir1O6", "Sr3Cd1Pt1O6", "Sr3Zn1Pt1O6",
+        "Ba5Br2Ru2O9", "Ba4Ag1O6Au1", "Sr5Au1O4", "Sr5Au1O4", "Rb1Se1O2F1", "Cs1Se1O2F1",
+        "K1Te1O2F1", "Na2K4Tl1O12", "Na3Ca2Bi1O6", "Na3Ni2Bi1O6", "Cs1Cd1B1O3", "K2Cd1Si1O4",
+        "Rb2Cd1Si1O4", "K2Zn1Si1O4", "K2Zn1Si1O12", "K2Zn1Ge1O4", "K0.6Na1.4Zn1Ge1O4",
+        "K2Zn1Ge2O6", "Na6Ca3Ge1O3", "Cs3Al1Ge2O7", "K4Ba1Ge3O9", "K16Sr4Ge1O3", 
+        "K3Tb1Ge3O10H2", "K3Eu1Ge3O10H2", "K1Ba6Zn4Ga7O21"]
+
+pred_konno = copy.deepcopy(kon_sing_comp)
+pred_konno_temp = copy.deepcopy(kon_sing_temp)
+
+for i in range(0, len(konno_no_comp)):
+    pred_konno.append(konno_no_comp[i])
+    pred_konno_temp.append(konno_no_temp[i])
+
+stanev_temp = []
+
+for i in range(0, len(stanev)):
+    stanev_temp.append(30)
