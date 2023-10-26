@@ -7,7 +7,7 @@ database and predicted the $T_c$ for about 30 million chemical compositions.
 Please be warned: 
 
 I did not have a lot of programming experience when I started this little project. 
-Of course my skills improved greatly as I was coding 24/7 (metaphorically speaken) which made
+Of course my skills improved greatly as I was coding 24/7 (metaphorically speaking) which made
 me realise that I did not write clean, nice code. Especially at the end. You know how it is,
 submission date is coming closer and closer which is why you hysterically start to write code 
 that works but you leave it as dirty as it is. 
